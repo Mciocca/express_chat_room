@@ -21,6 +21,8 @@
 <script src="/socket.io/socket.io.js"></script>
 <script type="text/javascript">
 	var socket = io.connect('http://localhost:3000')
+
+
 	
 	var nullName = function (name){
 		if(name === 'null' || name === null || name === ''){
@@ -34,7 +36,8 @@
 	
   
   socket.on('addMessage', function(data){
-    $("#chat-area").append("<p>"+data.name+": "+data.add+"</p>")
+    $("#chat-area").append("<p>"+data.name+": "+data.message+"</p>")
+    $("#chat-area").scrollTop(); = $("#chat-area").prop("scrollHeight");
   });
 
   socket.on('connect', function(data){

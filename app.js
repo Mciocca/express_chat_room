@@ -4,7 +4,9 @@ var http = require('http');
 var url = require('url');
 var colors = require('colors');
 var redis = require('redis');
-var redisClient = redis.createClient(10885, "redis://redistogo:9a33157669eb64a75fe81c630cd28c66@barreleye.redistogo.com");
+var redisClient = redis.createClient(10885, "barreleye.redistogo.com");
+var dbAuth = function() {redisClient.auth('9a33157669eb64a75fe81c630cd28c66');}
+dbAuth();
 var request = require('request');
 var socket = require('socket.io');
 var server = http.createServer(app);
@@ -13,11 +15,11 @@ var io = socket.listen(server, {log: false});
 app.use(express.static(__dirname+"/styles"));
 app.set('view engine', 'ejs');
 
-function pushMessage(socket,name,message){
+function pushMessage(name,message){
   var savedMessage = JSON.stringify({name: name, message: message})
-  socket.lpush("messages", savedMessage, function(err, reply){
-    socket.ltrim("messages", 0, 10);
-    console.log(reply + " messages stored in redis");
+  redisClient.lpush("messages", savedMessage, function(err, reply){
+    redisClient.ltrim("messages", 0, 9);
+    console.log((reply-1) + " messages stored in redis");
   });
 };
 
@@ -29,7 +31,7 @@ io.sockets.on('connection', function(client){
 	console.log('Client connected'.blue.underline);
 
   client.on('join', function(name){
-    console.log(name+' has joined');
+    console.log(name.grey+' has joined');
     client.set('name', name);
     client.emit('addClient', name);
     client.broadcast.emit('addClient', name);
@@ -39,19 +41,20 @@ io.sockets.on('connection', function(client){
      
       messages.forEach(function(message){
         message = JSON.parse(message);
-        client.emit("messages", message.name+ ":" + message.data);
+        client.emit("addMessage", message);
+        console.log("This is a stored message:" + message['name']+" " + message['message']);
       });
     //lrange end
     });
   //join end
   });
  
-	client.on('messages', function (data){
+  client.on('messages', function (data){
     client.get('name', function(err, name){
       console.log(name.grey + " says "+data.green);
-      client.emit('addMessage', {add: data, name:name});
-      client.broadcast.emit('addMessage', {add: data, name: name});
-      pushMessage(client,name,message)
+      client.emit('addMessage', {message: data, name:name});
+      client.broadcast.emit('addMessage', {message: data, name: name});
+      pushMessage(name,data)
     });
 	});
 
