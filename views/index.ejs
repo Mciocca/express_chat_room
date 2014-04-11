@@ -1,0 +1,58 @@
+<%= include partials/header %>
+
+<div id='info'>
+	<p>Logged in as: <span id="name"></span></p>
+</div>
+<div id="chatbox">
+	<div id="client-list"></div>
+  <div id="chat-area">
+  
+  </div>
+  
+  <div id="form-container">
+    <form id="messages">
+	    <input  id="message" type="text" placeholder="Your message here"></input>
+	    <button type="submit">Submit</button>
+    </form>
+  </div>
+</div>
+
+
+<script src="/socket.io/socket.io.js"></script>
+<script type="text/javascript">
+	var socket = io.connect('http://localhost:3000')
+	
+	var nullName = function (name){
+		if(name === 'null' || name === null || name === ''){
+  	  newName = prompt("Name cannot be blank\nWhat is your name?");
+  	  nullName(newName);
+  	}else{
+  	  socket.emit('join', name);
+  	  $("#name").text(name);
+    }
+	}
+	
+  
+  socket.on('addMessage', function(data){
+    $("#chat-area").append("<p>"+data.name+": "+data.add+"</p>")
+  });
+
+  socket.on('connect', function(data){
+  	name = prompt("What is your name?");
+  	nullName(name);
+  });
+  
+  socket.on('addClient', function(data){
+    $("#client-list").append("<p>"+data+"</p>")
+  });
+
+	$("#messages").submit(function(e){
+		 e.preventDefault();
+     var message = $("#message").val();
+     $("#message").val("");
+     console.log(message);
+     socket.emit('messages', message);
+   	});
+
+</script>
+<%= include partials/footer %>
