@@ -14,6 +14,10 @@ var io = socket.listen(server, {log: false});
 //Heroku ports
 var port = Number(process.env.PORT || 5000);
 
+io.configure( function() {
+   io.set('close timeout', 60*60*24); // 24h time out
+});
+
 
 app.use(express.static(__dirname+"/styles"));
 app.set('view engine', 'ejs');

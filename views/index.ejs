@@ -3,15 +3,13 @@
 <div id='info'>
 	<p>Logged in as: <span id="name"></span></p>
 </div>
+<h1>Connecting to app...</h1>
 <div id="chatbox">
 	<div id="client-list"></div>
-  <div id="chat-area">
-  
-  </div>
-  
+  <div id="chat-area"></div>
   <div id="form-container">
     <form id="messages">
-	    <input  id="message" type="text" placeholder="Your message here"></input>
+	    <input  id="message" type="text" placeholder="Your message here" autocomplete="off"></input>
 	    <button type="submit">Submit</button>
     </form>
   </div>
@@ -42,6 +40,8 @@
     $('#client-list').children('p').remove();
   	name = prompt("What is your name?");
   	nullName(name);
+    $("#chatbox").css("display", "block");
+    $("h1").remove();
   });
   
   socket.on('addClient', function(data){
@@ -56,7 +56,6 @@
 
   socket.on("clientDisconnect", function(name){
    $("p[title='"+name.name+"']").remove();
-   alert(name.name);
   });
 
 	$("#messages").submit(function(e){
