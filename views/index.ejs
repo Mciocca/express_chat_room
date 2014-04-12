@@ -65,6 +65,7 @@
      console.log(message);
      socket.emit('messages', message);
    	});
-
+ //faster disconnect events on heroku
+ $(window).bind("beforeunload", function(){socket.emit('disconnect', null);})
 </script>
 <%= include partials/footer %>

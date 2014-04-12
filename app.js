@@ -12,12 +12,7 @@ var socket = require('socket.io');
 var server = http.createServer(app);
 var io = socket.listen(server, {log: false});
 //Heroku ports
-var port = Number(process.env.PORT || 5000);
-
-io.configure( function() {
-   io.set('close timeout', 60*60*24); // 24h time out
-});
-
+var port = Number(process.env.PORT || 3000);
 
 app.use(express.static(__dirname+"/styles"));
 app.set('view engine', 'ejs');
@@ -89,7 +84,7 @@ io.sockets.on('connection', function(client){
     });
 	});
 
-  client.on ('disconnect', function(data){
+  client.on('disconnect', function(data){
     client.get("name", function(err, name){
       console.log(name+" has disconnected");
       redisClient.srem("clients", name, function(err,reply){
