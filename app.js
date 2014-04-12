@@ -69,7 +69,7 @@ io.sockets.on('connection', function(client){
       messages.forEach(function(message){
         message = JSON.parse(message);
         client.emit("addMessage", message);
-        console.log( message.name.grey+" said " + message.message);
+        console.log( message.name +" said " + message.message);
       });
     //lrange end
     });
