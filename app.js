@@ -48,10 +48,10 @@ server.listen(port, function(){
 });
 
 io.sockets.on('connection', function(client){
-	console.log('Client connected'.blue.underline);
+	console.log('Client connected');
 
   client.on('join', function(name){
-    console.log(name.grey+' has joined');
+    console.log(name+' has joined');
     client.set('name', name);
     pushClient(name);
    
@@ -78,7 +78,7 @@ io.sockets.on('connection', function(client){
  
   client.on('messages', function (data){
     client.get('name', function(err, name){
-      console.log(name.grey + " says "+data.green);
+      console.log(name + " says "+data);
       client.emit('addMessage', {message: data, name:name});
       client.broadcast.emit('addMessage', {message: data, name: name});
       pushMessage(name,data)
