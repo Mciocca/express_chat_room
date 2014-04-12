@@ -23,9 +23,27 @@ function pushMessage(name,message){
   });
 };
 
+function pushClient(name){
+  redisClient.sadd("clients", name, function(err, reply){
+    console.log(reply);
+  });
+}
+//reset client list on server reset
+resetClientList = function(){
+  redisClient.smembers('clients', function(err, reply){
+   reply.forEach(function(name){
+     redisClient.srem('clients', name, function(err, reply){
+       if(err){console.log(err);}
+       console.log(reply);
+     });
+   });
+  });
+}
+
 server.listen(3000, function(){
 	console.log('Server started on port 3000');
-})
+  resetClientList();
+});
 
 io.sockets.on('connection', function(client){
 	console.log('Client connected'.blue.underline);
@@ -33,16 +51,23 @@ io.sockets.on('connection', function(client){
   client.on('join', function(name){
     console.log(name.grey+' has joined');
     client.set('name', name);
-    client.emit('addClient', name);
-    client.broadcast.emit('addClient', name);
+    pushClient(name);
+   
+     redisClient.smembers("clients", function(err,users){
+       users.forEach(function(user){
+         client.emit('addClient', user);
+         client.broadcast.emit('addClient', user);  
+       });
+     });
+    
 
     redisClient.lrange("messages", 0, -1, function(err, messages){
       messages = messages.reverse();
-     
+      console.log("Loaded old messages :\n")
       messages.forEach(function(message){
         message = JSON.parse(message);
         client.emit("addMessage", message);
-        console.log("This is a stored message:" + message['name']+" " + message['message']);
+        console.log( message.name+" said " + message.message);
       });
     //lrange end
     });
@@ -59,7 +84,13 @@ io.sockets.on('connection', function(client){
 	});
 
   client.on ('disconnect', function(data){
-    console.log("Client disconnected");
+    client.get("name", function(err, name){
+      console.log(name+" has disconnected");
+      redisClient.srem("clients", name, function(err,reply){
+       if(err){console.log(err);}
+       client.broadcast.emit("clientDisconnect", {name: name});
+      });
+    });
   });
 
 });
@@ -69,9 +100,3 @@ app.get('/', function(request, response){
   response.end();
 });
 
-app.get('/stuff/:username',function(req, response){
-  var username = req.params.username;
-  response.render('stuff', {name: username});
-  response.end();
-});
- 

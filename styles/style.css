@@ -44,14 +44,14 @@ input[type=text]:focus{
 }
 
 button{
-	margin-left: 10px;
+  margin-left: 10px;
   margin-right: auto;
   width: 75px;
   background: linear-gradient(#ccc, #cee);
 }
 
 button:hover{
-  background:#ccc;
+  background:#cee;
   color:black;
 }
 

@@ -34,19 +34,31 @@
     }
 	}
 	
-  
   socket.on('addMessage', function(data){
     $("#chat-area").append("<p>"+data.name+": "+data.message+"</p>")
-    $("#chat-area").scrollTop(); = $("#chat-area").prop("scrollHeight");
+    $("#chat-area").scrollTop($("#chat-area").prop('scrollHeight'));
   });
 
   socket.on('connect', function(data){
+    //if reconnected because server restarts, remove old chat clients
+    $('#client-list').children('p').remove();
   	name = prompt("What is your name?");
   	nullName(name);
   });
   
   socket.on('addClient', function(data){
-    $("#client-list").append("<p>"+data+"</p>")
+    var list = [];
+    $("#client-list").children("p").each(function(index){
+      list.push($(this).text())
+    ;})
+    if($.inArray(data, list) == -1){
+      $("#client-list").append("<p title="+data+">"+data+"</p>");
+    }
+  });
+
+  socket.on("clientDisconnect", function(name){
+   $("p[title='"+name.name+"']").remove();
+   alert(name.name);
   });
 
 	$("#messages").submit(function(e){

@@ -1,7 +1,8 @@
 {
-	"name":"Express Chat",
+	"name":"Chat",
 	"version" : "0.0.1",
 	"description": "A chat server with express and socket.io",
+    "author": "Michael Ciocca",
 	  "dependencies":{
       "express" : "4.0.0",
       "ejs" : "1.0.0",
