@@ -11,6 +11,9 @@ var request = require('request');
 var socket = require('socket.io');
 var server = http.createServer(app);
 var io = socket.listen(server, {log: false});
+//Heroku ports
+var port = Number(process.env.PORT || 5000);
+
 
 app.use(express.static(__dirname+"/styles"));
 app.set('view engine', 'ejs');
@@ -34,14 +37,13 @@ resetClientList = function(){
    reply.forEach(function(name){
      redisClient.srem('clients', name, function(err, reply){
        if(err){console.log(err);}
-       console.log(reply);
      });
-   });
+   }); 
   });
 }
 
-server.listen(3000, function(){
-	console.log('Server started on port 3000');
+server.listen(port, function(){
+	console.log('Listening on ' + port);
   resetClientList();
 });
 
@@ -67,7 +69,7 @@ io.sockets.on('connection', function(client){
       messages.forEach(function(message){
         message = JSON.parse(message);
         client.emit("addMessage", message);
-        console.log( message.name+" said " + message.message);
+        console.log( message.name.grey+" said " + message.message);
       });
     //lrange end
     });
@@ -99,4 +101,3 @@ app.get('/', function(request, response){
   response.render('index');
   response.end();
 });
-
