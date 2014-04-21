@@ -42,7 +42,7 @@ resetClientList = function(){
 }
 
 server.listen(port, function(){
-	console.log('Listening on ' + port);
+  console.log('Listening on ' + port);
   resetClientList();
 });
 
@@ -82,7 +82,7 @@ io.sockets.on('connection', function(client){
       client.broadcast.emit('addMessage', {message: data, name: name});
       pushMessage(name,data)
     });
-	});
+ });
 
   client.on('disconnect', function(data){
     client.get("name", function(err, name){
