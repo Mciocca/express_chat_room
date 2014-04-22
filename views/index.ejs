@@ -21,13 +21,13 @@
 	var socket = io.connect(window.location.hostname)
 
 	var nullName = function (name){
-		if(name === 'null' || name === null || name === ''){
-  	  newName = prompt("Name cannot be blank\nWhat is your name?");
-  	  nullName(newName);
-  	}else{
-  	  socket.emit('join', name);
-  	  $("#name").text(name);
-    }
+          if(name === 'null' || name === null || name === ''){
+  	    newName = prompt("Name cannot be blank\nWhat is your name?");
+  	    nullName(newName);
+  	  }else{
+  	    socket.emit('join', name);
+  	    $("#name").text(name);
+          }
 	}
 	
   socket.on('addMessage', function(data){
@@ -38,8 +38,8 @@
   socket.on('connect', function(data){
     //if reconnected because server restarts, remove old chat clients
     $('#client-list').children('p').remove();
-  	name = prompt("What is your name?");
-  	nullName(name);
+    name = prompt("What is your name?");
+    nullName(name);
     $("#chatbox").css("display", "block");
     $("h1").remove();
   });
@@ -58,8 +58,8 @@
    $("p[title='"+name.name+"']").remove();
   });
 
-	$("#messages").submit(function(e){
-		 e.preventDefault();
+    $("#messages").submit(function(e){
+     e.preventDefault();
      var message = $("#message").val();
      $("#message").val("");
      console.log(message);
