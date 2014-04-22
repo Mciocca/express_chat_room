@@ -21,13 +21,13 @@
 	var socket = io.connect(window.location.hostname)
 
 	var nullName = function (name){
-          if(name === 'null' || name === null || name === ''){
+      if(name === 'null' || name === null || name === ''){
   	    newName = prompt("Name cannot be blank\nWhat is your name?");
   	    nullName(newName);
   	  }else{
   	    socket.emit('join', name);
   	    $("#name").text(name);
-          }
+      }
 	}
 	
   socket.on('addMessage', function(data){
