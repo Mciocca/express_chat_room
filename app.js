@@ -4,8 +4,8 @@ var http = require('http');
 var url = require('url');
 var colors = require('colors');
 var redis = require('redis');
-var redisClient = redis.createClient(10885, "barreleye.redistogo.com");
-var dbAuth = function() {redisClient.auth('9a33157669eb64a75fe81c630cd28c66');}
+var redisClient = redis.createClient(10885, "PRIVATE");
+var dbAuth = function() {redisClient.auth('PRIVATE');}
 dbAuth();
 var request = require('request');
 var socket = require('socket.io');
